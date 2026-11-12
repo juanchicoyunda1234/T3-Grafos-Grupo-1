@@ -209,6 +209,6 @@ Con los datos de prueba, 44 de 44 pruebas pasan. El detalle está en [pruebas/Ca
 | Llamuca Abrajan Andrés | CRUD e integridad | `Grafo` (parte 2) | `feature/crud`, PR #9 | PR #10, #11, #12 |
 | Torosina Armendariz Jeremy | BFS, DFS, componentes y diagrama de clases | `ColaVertices`, `Recorridos`, `ResultadoRecorrido`, `docs/DiagramaClases.md` | `features/recorridos`, PR #8 | PR #14 |
 | Chico Yunda Juan Carlos | Recomendación, reto especial, informe técnico e integración final | `Recomendador`, `Candidato`, `docs/InformeTecnico.md`, README | `feature/recomendador`, PR #14 | PR #8, PR #13 |
-| Tuza Quinatoa Noemi | Menú y validaciones | `Main`, `DatosPrueba` | `feature/menu`, PR pendiente | PR #13 |
-| Altamirano Segovia Jullisa | Pruebas y evidencias | `PruebasGrafo`, `pruebas/`, `evidencias/` | `feature/pruebas-docs`, PR #13 | PR pendiente |
+| Tuza Quinatoa Noemi | Menú y validaciones | `Main`, `DatosPrueba` | `feature/menu`, `feature/menu-1`, PR #16, #17 | PR #13 |
+| Altamirano Segovia Jullisa | Pruebas y evidencias | `PruebasGrafo`, `pruebas/`, `evidencias/` | `feature/pruebas-docs`, PR #13 | PR #16, #17 |
 
