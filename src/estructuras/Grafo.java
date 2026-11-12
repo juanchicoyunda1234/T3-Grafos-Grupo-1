@@ -33,6 +33,9 @@ public class Grafo {
         cantidadAristas = 0;
     }
 
+    // =====================================================================
+    // PARTE 1 (feature/grafo): registrar, buscar, conectar y mostrar
+    // =====================================================================
 
     /** Quita espacios de los extremos y deja un solo espacio entre palabras. */
     public static String normalizar(String nombre) {
@@ -173,6 +176,10 @@ public class Grafo {
     public boolean estaVacio() {
         return cantidadVertices == 0;
     }
+
+    // =====================================================================
+    // PARTE 2 (feature/crud): eliminar, integridad y estadisticas
+    // =====================================================================
 
     /** RF03: elimina la amistad a-b de AMBAS listas. */
     public boolean eliminarConexion(String a, String b) {
