@@ -18,7 +18,7 @@
 10. [Decisiones no definidas en el enunciado](#decisiones-no-definidas-en-el-enunciado)
 11. [Aportes individuales](#aportes-individuales)
 
-Documentos: [📄 Informe técnico](docs/InformeTecnico.md) · [🧪 Casos de prueba](pruebas/CasosPrueba.md) · [📐 Diagrama de clases](docs/DiagramaClases.md) · [🖼️ Evidencias](evidencias/)
+Documentos: [Informe técnico](docs/InformeTecnico.md) · [Casos de prueba](pruebas/CasosPrueba.md) · [Diagrama de clases](docs/DiagramaClases.md) · [Evidencias](evidencias/)
 
 ## Objetivo
 
