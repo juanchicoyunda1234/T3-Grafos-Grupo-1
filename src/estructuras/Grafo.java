@@ -33,9 +33,6 @@ public class Grafo {
         cantidadAristas = 0;
     }
 
-    // =====================================================================
-    // PARTE 1 (feature/grafo): registrar, buscar, conectar y mostrar
-    // =====================================================================
 
     /** Quita espacios de los extremos y deja un solo espacio entre palabras. */
     public static String normalizar(String nombre) {
@@ -176,3 +173,189 @@ public class Grafo {
     public boolean estaVacio() {
         return cantidadVertices == 0;
     }
+
+    /** RF03: elimina la amistad a-b de AMBAS listas. */
+    public boolean eliminarConexion(String a, String b) {
+        NodoVertice va = buscarVertice(a);
+        NodoVertice vb = buscarVertice(b);
+        if (va == null || vb == null || !estanConectados(va, vb)) {
+            return false;
+        }
+        quitarDeLista(va, vb);
+        quitarDeLista(vb, va);
+        cantidadAristas--;
+        return true;
+    }
+
+    /** Quita "destino" de la lista de adyacencia de "origen". */
+    private boolean quitarDeLista(NodoVertice origen, NodoVertice destino) {
+        NodoAdyacencia anterior = null;
+        NodoAdyacencia actual = origen.getPrimerAdyacente();
+        while (actual != null && actual.getDestino() != destino) {
+            anterior = actual;
+            actual = actual.getSiguiente();
+        }
+        if (actual == null) {
+            return false;
+        }
+        if (anterior == null) {
+            origen.setPrimerAdyacente(actual.getSiguiente());
+        } else {
+            anterior.setSiguiente(actual.getSiguiente());
+        }
+        origen.setGrado(origen.getGrado() - 1);
+        return true;
+    }
+
+    /**
+     * RF04: elimina el vertice y TODAS sus conexiones.
+     * 1) lo quita de la lista de cada vecino, 2) lo desenlaza de la lista
+     * principal, 3) renumera los indices para que sigan siendo 0..n-1.
+     */
+    public boolean eliminarVertice(String nombre) {
+        NodoVertice v = buscarVertice(nombre);
+        if (v == null) {
+            return false;
+        }
+        NodoAdyacencia a = v.getPrimerAdyacente();
+        while (a != null) {
+            quitarDeLista(a.getDestino(), v);
+            cantidadAristas--;
+            a = a.getSiguiente();
+        }
+        v.setPrimerAdyacente(null);
+        v.setGrado(0);
+
+        NodoVertice anterior = null;
+        NodoVertice actual = primero;
+        while (actual != v) {
+            anterior = actual;
+            actual = actual.getSiguiente();
+        }
+        if (anterior == null) {
+            primero = v.getSiguiente();
+        } else {
+            anterior.setSiguiente(v.getSiguiente());
+        }
+        if (ultimo == v) {
+            ultimo = anterior;
+        }
+        v.setSiguiente(null);
+        cantidadVertices--;
+        reindexar();
+        return true;
+    }
+
+    private void reindexar() {
+        int i = 0;
+        NodoVertice actual = primero;
+        while (actual != null) {
+            actual.setIndice(i++);
+            actual = actual.getSiguiente();
+        }
+    }
+
+    /** true si el nodo es (por referencia) uno de los vertices de la lista. */
+    private boolean perteneceAlGrafo(NodoVertice nodo) {
+        NodoVertice actual = primero;
+        while (actual != null) {
+            if (actual == nodo) {
+                return true;
+            }
+            actual = actual.getSiguiente();
+        }
+        return false;
+    }
+
+    /**
+     * RF10: revisa la estructura completa. Devuelve la lista de problemas
+     * encontrados; si esta vacia, el grafo esta integro.
+     */
+    public ArrayList<String> validarIntegridad() {
+        ArrayList<String> problemas = new ArrayList<>();
+        int contados = 0;
+        int sumaGrados = 0;
+        NodoVertice v = primero;
+        while (v != null) {
+            if (v.getIndice() != contados) {
+                problemas.add("Indice incorrecto en " + v.getNombre());
+            }
+            contados++;
+
+            NodoVertice w = v.getSiguiente();
+            while (w != null) {
+                if (w.getNombre().equalsIgnoreCase(v.getNombre())) {
+                    problemas.add("Vertice duplicado: " + v.getNombre());
+                }
+                w = w.getSiguiente();
+            }
+
+            int largo = 0;
+            NodoAdyacencia a = v.getPrimerAdyacente();
+            while (a != null) {
+                largo++;
+                NodoVertice d = a.getDestino();
+                if (d == v) {
+                    problemas.add("Autoconexion en " + v.getNombre());
+                } else if (!perteneceAlGrafo(d)) {
+                    problemas.add("Referencia invalida en " + v.getNombre() + " -> " + d.getNombre());
+                } else if (!estanConectados(d, v)) {
+                    problemas.add("Arista no simetrica: " + v.getNombre() + " -> " + d.getNombre());
+                }
+                NodoAdyacencia b = a.getSiguiente();
+                while (b != null) {
+                    if (b.getDestino() == d) {
+                        problemas.add("Arista duplicada: " + v.getNombre() + " -> " + d.getNombre());
+                    }
+                    b = b.getSiguiente();
+                }
+                a = a.getSiguiente();
+            }
+            if (largo != v.getGrado()) {
+                problemas.add("Grado desactualizado en " + v.getNombre());
+            }
+            sumaGrados += largo;
+            v = v.getSiguiente();
+        }
+        if (contados != cantidadVertices) {
+            problemas.add("Contador de vertices incorrecto");
+        }
+        if (sumaGrados != 2 * cantidadAristas) {
+            problemas.add("La suma de grados no es el doble de las aristas");
+        }
+        return problemas;
+    }
+
+    /** Parte numerica de la opcion 10 del menu. */
+    public String estadisticas() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Vertices (estudiantes): ").append(cantidadVertices).append('\n');
+        sb.append("Aristas (amistades):    ").append(cantidadAristas).append('\n');
+        if (cantidadVertices == 0) {
+            return sb.toString();
+        }
+        double promedio = (2.0 * cantidadAristas) / cantidadVertices;
+        sb.append(String.format("Grado promedio:         %.2f%n", promedio));
+
+        NodoVertice mayor = primero;
+        StringBuilder aislados = new StringBuilder();
+        NodoVertice v = primero;
+        while (v != null) {
+            if (v.getGrado() > mayor.getGrado()) {
+                mayor = v;
+            }
+            if (v.getGrado() == 0) {
+                if (aislados.length() > 0) {
+                    aislados.append(", ");
+                }
+                aislados.append(v.getNombre());
+            }
+            v = v.getSiguiente();
+        }
+        sb.append("Mas conectado:          ").append(mayor.getNombre())
+          .append(" (").append(mayor.getGrado()).append(" amigos)\n");
+        sb.append("Aislados:               ")
+          .append(aislados.length() == 0 ? "ninguno" : aislados.toString()).append('\n');
+        return sb.toString();
+    }
+}
